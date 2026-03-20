@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from flask_jwt_extended import jwt_required
 
 from services.editorial_service import (
     create_editorial,
@@ -13,12 +14,14 @@ editoriales_bp = Blueprint("editoriales", __name__)
 
 
 @editoriales_bp.get("")
+@jwt_required()
 def get_editoriales():
     editoriales = [e.to_dict() for e in list_editoriales()]
     return api_response(True, editoriales, None, 200)
 
 
 @editoriales_bp.post("")
+@jwt_required()
 def post_editorial():
     payload = request.get_json(silent=True)
     require_json_object(payload)
@@ -28,6 +31,7 @@ def post_editorial():
 
 
 @editoriales_bp.put("/<int:editorial_id>")
+@jwt_required()
 def put_editorial(editorial_id: int):
     payload = request.get_json(silent=True)
     require_json_object(payload)
@@ -37,6 +41,7 @@ def put_editorial(editorial_id: int):
 
 
 @editoriales_bp.delete("/<int:editorial_id>")
+@jwt_required()
 def remove_editorial(editorial_id: int):
     delete_editorial(editorial_id)
     return api_response(True, {"message": "Editorial inactivada"}, None, 200)

@@ -1,4 +1,15 @@
 const BASE_URL = import.meta.env.VITE_API_URL
+const TOKEN_KEY = 'auth_token'
+
+export function setAuthToken(token) {
+  if (token) localStorage.setItem(TOKEN_KEY, token)
+  else localStorage.removeItem(TOKEN_KEY)
+}
+
+function getAuthHeaders() {
+  const token = localStorage.getItem(TOKEN_KEY)
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
 
 async function request(path, options = {}) {
   if (!BASE_URL) {
@@ -7,14 +18,24 @@ async function request(path, options = {}) {
 
   try {
     const response = await fetch(`${BASE_URL}${path}`, {
-      headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(),
+        ...(options.headers || {}),
+      },
       ...options,
     })
 
-    const payload = await response.json().catch(() => ({ success: false, data: {}, error: 'Respuesta inválida del servidor' }))
+    const payload = await response
+      .json()
+      .catch(() => ({ success: false, data: {}, error: 'Respuesta inválida del servidor' }))
 
     if (!response.ok || !payload.success) {
-      return { success: false, data: payload.data || {}, error: payload.error || 'Error inesperado' }
+      return {
+        success: false,
+        data: payload.data || {},
+        error: payload.error || 'Error inesperado',
+      }
     }
 
     return payload
