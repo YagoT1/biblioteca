@@ -1,6 +1,10 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+const BASE_URL = import.meta.env.VITE_API_URL
 
 async function request(path, options = {}) {
+  if (!BASE_URL) {
+    return { success: false, data: {}, error: 'VITE_API_URL no está configurada' }
+  }
+
   try {
     const response = await fetch(`${BASE_URL}${path}`, {
       headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
@@ -14,7 +18,7 @@ async function request(path, options = {}) {
     }
 
     return payload
-  } catch (error) {
+  } catch (_error) {
     return { success: false, data: {}, error: 'No se pudo conectar con el backend' }
   }
 }
