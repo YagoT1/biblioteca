@@ -3,6 +3,7 @@ from logging.config import dictConfig
 
 from dotenv import load_dotenv
 from flask import Flask
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
 from config import get_config
@@ -53,6 +54,7 @@ def create_app(config_name: str | None = None) -> Flask:
 
     configure_logging(app)
 
+    CORS(app)
     db.init_app(app)
 
     jwt = JWTManager(app)
@@ -69,11 +71,7 @@ def create_app(config_name: str | None = None) -> Flask:
 
     @app.get("/health")
     def health_check():
-        return {
-            "success": True,
-            "data": {"status": "ok"},
-            "error": None,
-        }, 200
+        return {"status": "ok"}, 200
 
     return app
 
