@@ -46,6 +46,8 @@ def create_app(config_name: str | None = None) -> Flask:
 
     if not app.config.get("SQLALCHEMY_DATABASE_URI"):
         raise RuntimeError("DATABASE_URL no configurada")
+    if not app.config.get("SECRET_KEY"):
+        raise RuntimeError("SECRET_KEY no configurada")
     if not app.config.get("JWT_SECRET_KEY"):
         raise RuntimeError("JWT_SECRET_KEY no configurada")
 
