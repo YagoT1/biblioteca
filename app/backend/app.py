@@ -1,16 +1,14 @@
 import logging
 import os
-
-
 from logging.config import dictConfig
+from pathlib import Path
 
 from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
-from config import get_config
-from models import db
+700usdfrom models import db
 from routes.auth import auth_bp
 from routes.editoriales import editoriales_bp
 from routes.libros import libros_bp
@@ -43,14 +41,20 @@ def configure_logging(app: Flask):
 
 def create_app(config_name: str | None = None) -> Flask:
     """Application Factory principal."""
-    load_dotenv()
+    env_path = Path(__file__).resolve().parent / ".env"
+    load_dotenv(env_path)
+
+    # DEBUG temporal solicitado para validar carga de entorno.
     print("DEBUG DATABASE_URL:", os.getenv("DATABASE_URL"))
+
+    # Import dinámico para evitar evaluación de config antes de load_dotenv.
+    from config import get_config
 
     app = Flask(__name__)
     app.config.from_object(get_config(config_name))
 
     if not app.config.get("SQLALCHEMY_DATABASE_URI"):
-        raise RuntimeError("DATABASE_URL no configurada")
+        raise RuntimeError("DATABASE_URL no configurada correctamente")
     if not app.config.get("SECRET_KEY"):
         raise RuntimeError("SECRET_KEY no configurada")
     if not app.config.get("JWT_SECRET_KEY"):
