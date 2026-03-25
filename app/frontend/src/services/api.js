@@ -1,14 +1,17 @@
-const BASE_URL = import.meta.env.VITE_API_URL
-const TOKEN_KEY = 'auth_token'
+import { clearAuthToken, getAuthToken, setAuthToken } from '../utils/auth'
 
-export function setAuthToken(token) {
-  if (token) localStorage.setItem(TOKEN_KEY, token)
-  else localStorage.removeItem(TOKEN_KEY)
-}
+const BASE_URL = import.meta.env.VITE_API_URL
 
 function getAuthHeaders() {
-  const token = localStorage.getItem(TOKEN_KEY)
+  const token = getAuthToken()
   return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+function handleUnauthorized() {
+  clearAuthToken()
+  if (window.location.pathname !== '/login') {
+    window.location.assign('/login')
+  }
 }
 
 async function request(path, options = {}) {
@@ -30,6 +33,11 @@ async function request(path, options = {}) {
       .json()
       .catch(() => ({ success: false, data: {}, error: 'Respuesta inválida del servidor' }))
 
+    if (response.status === 401) {
+      handleUnauthorized()
+      return { success: false, data: {}, error: payload.error || 'No autorizado' }
+    }
+
     if (!response.ok || !payload.success) {
       return {
         success: false,
@@ -43,6 +51,8 @@ async function request(path, options = {}) {
     return { success: false, data: {}, error: 'No se pudo conectar con el backend' }
   }
 }
+
+export { setAuthToken }
 
 export const api = {
   get: (path) => request(path),

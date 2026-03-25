@@ -1,11 +1,14 @@
 import { useMemo, useState } from 'react'
-import AdminLayout from './layouts/AdminLayout'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import ProtectedRoute from './components/ProtectedRoute'
 import { useEditoriales } from './hooks/useEditoriales'
 import { useLibros } from './hooks/useLibros'
 import { usePrestamos } from './hooks/usePrestamos'
+import AdminLayout from './layouts/AdminLayout'
 import DashboardPage from './pages/DashboardPage'
 import EditorialesPage from './pages/EditorialesPage'
 import LibrosPage from './pages/LibrosPage'
+import LoginPage from './pages/LoginPage'
 import PrestamosPage from './pages/PrestamosPage'
 
 function Alert({ alert, onClose }) {
@@ -19,7 +22,7 @@ function Alert({ alert, onClose }) {
   )
 }
 
-export default function App() {
+function AdminApp() {
   const [page, setPage] = useState('dashboard')
   const [alert, setAlert] = useState(null)
 
@@ -48,5 +51,24 @@ export default function App() {
       <Alert alert={alert} onClose={() => setAlert(null)} />
       {pageComponent}
     </AdminLayout>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/"
+          element={(
+            <ProtectedRoute>
+              <AdminApp />
+            </ProtectedRoute>
+          )}
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
