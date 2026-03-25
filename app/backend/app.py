@@ -1,4 +1,7 @@
 import logging
+import os
+
+
 from logging.config import dictConfig
 
 from dotenv import load_dotenv
@@ -41,6 +44,7 @@ def configure_logging(app: Flask):
 def create_app(config_name: str | None = None) -> Flask:
     """Application Factory principal."""
     load_dotenv()
+    print("DEBUG DATABASE_URL:", os.getenv("DATABASE_URL"))
 
     app = Flask(__name__)
     app.config.from_object(get_config(config_name))
