@@ -8,7 +8,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
-700usdfrom models import db
+from models import db
 from routes.auth import auth_bp
 from routes.editoriales import editoriales_bp
 from routes.libros import libros_bp
