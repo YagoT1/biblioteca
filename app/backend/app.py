@@ -62,7 +62,7 @@ def create_app(config_name: str | None = None) -> Flask:
 
     configure_logging(app)
 
-    CORS(app)
+
     db.init_app(app)
 
     jwt = JWTManager(app)
@@ -86,6 +86,13 @@ def create_app(config_name: str | None = None) -> Flask:
 
 app = create_app()
 
-
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "http://localhost:5173",
+            "https://biblioteca-nu-snowy.vercel.app"
+        ]
+    }
+})
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
