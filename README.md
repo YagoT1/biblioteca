@@ -44,3 +44,16 @@ npm run dev
 - Root Directory: `app/frontend`
 - Build Command: `npm run build`
 - Output Directory: `dist`
+
+## Crear usuario administrador inicial
+
+```bash
+cd app/backend
+python scripts/create_admin.py
+```
+
+Credenciales iniciales por defecto:
+- usuario: `admin`
+- contraseña: `admin123`
+
+⚠️ Cambiar la contraseña inmediatamente en producción.
